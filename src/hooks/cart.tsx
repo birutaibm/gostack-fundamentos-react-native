@@ -18,7 +18,7 @@ interface Product {
 
 interface CartContext {
   products: Product[];
-  addToCart(item: Product): void;
+  addToCart(item: Omit<Product, 'quantity'>): void;
   increment(id: string): void;
   decrement(id: string): void;
 }
@@ -73,12 +73,12 @@ const CartProvider: React.FC = ({ children }) => {
   }, []);
 
   const addToCart = useCallback(
-    async (product: Product) => {
+    async (product: Omit<Product, 'quantity'>) => {
       const productInCart = products.find(p => p.id === product.id);
       if (productInCart) {
         increment(product.id);
       } else {
-        setProducts(old => [...old, product]);
+        setProducts(old => [...old, { ...product, quantity: 1 }]);
       }
     },
     [products, increment],
